@@ -1,0 +1,11 @@
+# .env holds the path on the host system need to be secret.
+.env
+
+# .txt files hold the secrets, passwords etc. don't push to remote
+.txt
+
+# OSX system file
+.DS_Store
+
+# /app directory holds all the application data
+/app
