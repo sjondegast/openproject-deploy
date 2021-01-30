@@ -60,13 +60,13 @@ services:
     depends_on:
       - web
     networks:
-      - openproject-openproject-frontend
+      - openproject-frontend
 
   web:
     <<: *app
     command: './docker/prod/web'
     networks:
-      - openproject-openproject-frontend
+      - openproject-frontend
       - openproject-backend
     depends_on:
       - db
