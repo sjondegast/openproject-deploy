@@ -19,7 +19,8 @@ x-op-app: &app
     RAILS_CACHE_STORE: 'memcache'
     OPENPROJECT_CACHE__MEMCACHE__SERVER: 'cache:11211'
     OPENPROJECT_RAILS__RELATIVE__URL__ROOT: '${OPENPROJECT_RAILS__RELATIVE__URL__ROOT:-}'
-    DATABASE_URL: 'postgres://postgres:p4ssw0rd@db/openproject'
+    DATABASE_URL: '${DATABASE_URL}'
+    # DATABASE_URL: 'postgres://postgres:p4ssw0rd@db/openproject'
     USE_PUMA: 'true'
     # set to true to enable the email receiving feature. See ./docker/cron for more options
     IMAP_ENABLED: '${IMAP_ENABLED:-false}'
@@ -36,8 +37,8 @@ services:
       - '${OPENPROJECT_HOME}/pgdata:/var/lib/postgresql/data'
       - '/etc/localtime:/etc/localtime:ro'
     environment:
-      POSTGRES_PASSWORD: p4ssw0rd
-      POSTGRES_DB: openproject
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     networks:
       - openproject-openproject-backend
 
@@ -98,3 +99,10 @@ services:
     restart: on-failure
     networks:
       - openproject-backend
+# secrets:
+#   postgres_db:
+#     file: ./secrets/postgres_db.txt # put postgresql db name to this file
+#   postgres_password:
+#     file: ./secrets/postgres_password.txt # put postgresql password to this file
+#   postgres_user:
+#     file: ./secrets/postgres_user.txt # put postgresql username to this file
