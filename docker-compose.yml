@@ -40,7 +40,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     networks:
-      - openproject-openproject-backend
+      - openproject-backend
 
   cache:
     image: memcached
