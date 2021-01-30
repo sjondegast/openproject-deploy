@@ -18,7 +18,7 @@ x-op-app: &app
   environment:
     RAILS_CACHE_STORE: 'memcache'
     OPENPROJECT_CACHE__MEMCACHE__SERVER: 'cache:11211'
-    OPENPROJECT_RAILS__RELATIVE__URL__ROOT: '${OPENPROJECT_RAILS__RELATIVE__URL__ROOT:-}'
+    OPENPROJECT_RAILS__RELATIVE__URL__ROOT: '${OPENPROJECT_RAILS__RELATIVE__URL__ROOT:-/openproject}'
     DATABASE_URL: '${DATABASE_URL}'
     # DATABASE_URL: 'postgres://postgres:p4ssw0rd@db/openproject'
     USE_PUMA: 'true'
@@ -56,7 +56,7 @@ services:
       - '${PORT:-8080}:80'
     environment:
       APP_HOST: web
-      OPENPROJECT_RAILS__RELATIVE__URL__ROOT: '${OPENPROJECT_RAILS__RELATIVE__URL__ROOT:-}'
+      OPENPROJECT_RAILS__RELATIVE__URL__ROOT: '${OPENPROJECT_RAILS__RELATIVE__URL__ROOT:-/openproject}'
     depends_on:
       - web
     networks:
