@@ -1,8 +1,8 @@
-version: "3.7"
+version: '3.7'
 
 networks:
-  frontend:
-  backend:
+  openproject-frontend:
+  openproject-backend:
 
 volumes:
   pgdata:
@@ -16,55 +16,57 @@ x-op-app: &app
   <<: *image
   <<: *restart_policy
   environment:
-    RAILS_CACHE_STORE: "memcache"
-    OPENPROJECT_CACHE__MEMCACHE__SERVER: "cache:11211"
-    OPENPROJECT_RAILS__RELATIVE__URL__ROOT: "${OPENPROJECT_RAILS__RELATIVE__URL__ROOT:-}"
-    DATABASE_URL: "postgres://postgres:p4ssw0rd@db/openproject"
-    USE_PUMA: "true"
+    RAILS_CACHE_STORE: 'memcache'
+    OPENPROJECT_CACHE__MEMCACHE__SERVER: 'cache:11211'
+    OPENPROJECT_RAILS__RELATIVE__URL__ROOT: '${OPENPROJECT_RAILS__RELATIVE__URL__ROOT:-}'
+    DATABASE_URL: 'postgres://postgres:p4ssw0rd@db/openproject'
+    USE_PUMA: 'true'
     # set to true to enable the email receiving feature. See ./docker/cron for more options
-    IMAP_ENABLED: "${IMAP_ENABLED:-false}"
+    IMAP_ENABLED: '${IMAP_ENABLED:-false}'
   volumes:
-    - "opdata:/var/openproject/assets"
+    - 'opdata:/var/openproject/assets'
+    - '/etc/localtime:/etc/localtime:ro'
 
 services:
   db:
     image: postgres:10
     <<: *restart_policy
-    stop_grace_period: "3s"
+    stop_grace_period: '3s'
     volumes:
-      - "pgdata:/var/lib/postgresql/data"
+      - 'pgdata:/var/lib/postgresql/data'
+      - '/etc/localtime:/etc/localtime:ro'
     environment:
       POSTGRES_PASSWORD: p4ssw0rd
       POSTGRES_DB: openproject
     networks:
-      - backend
+      - openproject-openproject-backend
 
   cache:
     image: memcached
     <<: *restart_policy
     networks:
-      - backend
+      - openproject-backend
 
   proxy:
     <<: *image
     <<: *restart_policy
-    command: "./docker/prod/proxy"
+    command: './docker/prod/proxy'
     ports:
-      - "${PORT:-8080}:80"
+      - '${PORT:-8080}:80'
     environment:
       APP_HOST: web
-      OPENPROJECT_RAILS__RELATIVE__URL__ROOT: "${OPENPROJECT_RAILS__RELATIVE__URL__ROOT:-}"
+      OPENPROJECT_RAILS__RELATIVE__URL__ROOT: '${OPENPROJECT_RAILS__RELATIVE__URL__ROOT:-}'
     depends_on:
       - web
     networks:
-      - frontend
+      - openproject-openproject-frontend
 
   web:
     <<: *app
-    command: "./docker/prod/web"
+    command: './docker/prod/web'
     networks:
-      - frontend
-      - backend
+      - openproject-openproject-frontend
+      - openproject-backend
     depends_on:
       - db
       - cache
@@ -72,9 +74,9 @@ services:
 
   worker:
     <<: *app
-    command: "./docker/prod/worker"
+    command: './docker/prod/worker'
     networks:
-      - backend
+      - openproject-backend
     depends_on:
       - db
       - cache
@@ -82,9 +84,9 @@ services:
 
   cron:
     <<: *app
-    command: "./docker/prod/cron"
+    command: './docker/prod/cron'
     networks:
-      - backend
+      - openproject-backend
     depends_on:
       - db
       - cache
@@ -92,7 +94,7 @@ services:
 
   seeder:
     <<: *app
-    command: "./docker/prod/seeder"
+    command: './docker/prod/seeder'
     restart: on-failure
     networks:
-      - backend
+      - openproject-backend
